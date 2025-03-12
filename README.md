@@ -54,5 +54,3 @@ _**To be added later**_: Execution time, node evaluations, win rate, and scalabi
 - Gemini API Documentation  
 
 ---
-
-> _Project for educational purposes under AI and Multi-Agent Systems coursework._
