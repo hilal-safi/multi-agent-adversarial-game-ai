@@ -38,7 +38,7 @@ class GeminiAPI:
 
 gemini = GeminiAPI(gemini_key)
 
-
+# - These are all rules that I added as I found flaws in its reasonings. Add or remove rules as you wish
 rules = """Rules:
 - Player A uses pieces marked as A.
 - Player B uses pieces marked as B. You are player B.
@@ -48,7 +48,7 @@ rules = """Rules:
 - You cannot place anything on a column that's full. If the top row of a column you pick has a number, avoid using that column.
 - Pick the best move that would let you as player B to win the game by connection 4 in a row. 
 - Stop player A from getting 4 in a row. For example, if you see the player has 3 'A's stacked, you must select that column to stop the player.
-- If a player A has B in a row with an ability to place their piece on either side to make 4 in a row, make sure you block at least 1 side so it doesn't lead to a fork or a double threat.
+- If a player A has 2 'A's in a row with an ability to place their piece on either side to make 4 in a row, make sure you block at least 1 side so it doesn't lead to a fork or a double threat.
 - If there is not enough room for you to create 4 in a row, there is no need to pursue that path.
 - If player A has 3 in a row, attempt to stop them at all costs. Consider all the locations that the player can place their next move. Remember, they can only stack them.
 - If a potential threat is surrounded by 'B's and there are no '0's for A to be placed to form 4 in a row, then it is not a threat.
