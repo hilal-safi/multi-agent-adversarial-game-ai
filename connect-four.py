@@ -21,10 +21,32 @@ def get_valid_moves(state):
     return [col for col in range(state.columns) if state.is_valid_move(col)]
     
 def make_move(state, column):
-    # Place disc in the specified column at lowest available row
-    # Update current player
-    # Return new state
+    board = state['board']
+    # In each column, index 0 is the bottom.
+    for row in range(6):
+        if board[column][row] == 0:
+            board[column][row] = state['current_player']
+            # Record the move for later undo: (column, row)
+            state['move_history'].append((column, row))
+            # Switch current player: if 1 then become 2, and vice versa.
+            state['current_player'] = 2 if state['current_player'] == 1 else 1
+            return state
+    # If no empty spot is found, the column is full.
+    raise ValueError(f"Column {column} is full. Invalid move.")
+
+def undo_move(state):
+    if not state['move_history']:
+        raise ValueError("No moves to undo.")
+    # Get the last move (column, row)
+    column, row = state['move_history'].pop()
+    # Retrieve the player who made that move.
+    removed_player = state['board'][column][row]
+    # Remove the disc.
+    state['board'][column][row] = 0
+    # Revert the current player to the one who made the undone move.
+    state['current_player'] = removed_player
     return state
+
     
 def check_win(state, last_move):
     # Check for 4-in-a-row horizontally, vertically, and diagonally
