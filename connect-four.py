@@ -50,54 +50,12 @@ def undo_move(state):
 
     
 def check_win(state):
-    last_move = state['move_history'][-1]
     # Check for 4-in-a-row horizontally, vertically, and diagonally
     # Return winner (1 or 2) if found, else None
-    if not hasattr(last_move, 'row') or not hasattr(last_move, 'col'):
-        # Fall back to full check if last_move doesn't have row/col
-        if board_check_win(state, 1):
-            return 1
-        if board_check_win(state, 2):
-            return 2
-        return None
-        
-    row, col = last_move.row, last_move.col
-    piece = state.grid[row][col]
-    
-    # Check horizontal
-    for c in range(max(0, col-3), min(state.columns-3, col+1)):
-        if (state.grid[row][c] == piece and
-            state.grid[row][c+1] == piece and
-            state.grid[row][c+2] == piece and
-            state.grid[row][c+3] == piece):
-            return piece
-    
-    # Check vertical
-    for r in range(max(0, row-3), min(state.rows-3, row+1)):
-        if (state.grid[r][col] == piece and
-            state.grid[r+1][col] == piece and
-            state.grid[r+2][col] == piece and
-            state.grid[r+3][col] == piece):
-            return piece
-    
-    # Check diagonal (top-left to bottom-right)
-    for r, c in zip(range(row-3, row+1), range(col-3, col+1)):
-        if r >= 0 and c >= 0 and r+3 < state.rows and c+3 < state.columns:
-            if (state.grid[r][c] == piece and
-                state.grid[r+1][c+1] == piece and
-                state.grid[r+2][c+2] == piece and
-                state.grid[r+3][c+3] == piece):
-                return piece
-    
-    # Check diagonal (bottom-left to top-right)
-    for r, c in zip(range(row+3, row-1, -1), range(col-3, col+1)):
-        if r-3 >= 0 and c >= 0 and r < state.rows and c+3 < state.columns:
-            if (state.grid[r][c] == piece and
-                state.grid[r-1][c+1] == piece and
-                state.grid[r-2][c+2] == piece and
-                state.grid[r-3][c+3] == piece):
-                return piece
-    
+    if board_check_win(state, 1):
+        return 1
+    if board_check_win(state, 2):
+        return 2
     return None
     
 def is_draw(state):
