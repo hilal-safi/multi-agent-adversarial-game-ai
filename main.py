@@ -3,6 +3,7 @@ import sys
 import math
 import random
 import pygame
+from connect_four import initalize_board, MinimaxAgent
 from game.board import Board, check_win
 from game.ui import UIBuilder
 from typing import Literal, Tuple, List
@@ -11,7 +12,7 @@ from typing import Literal, Tuple, List
 # - The required package for Gemini is already specified in requirements.txt
 # - The API is free, but if you want to avoid using Gemini (e.g. no API key), set the variable below to False. 
 
-gemini_enabled = True
+gemini_enabled = False
 
 # - To use Gemini's API, get a free API key and place it inside .env file like so: GEMINI_API_KEY=the_key
 # -
@@ -99,6 +100,12 @@ def pygame_game(mode: Literal["2player", "minimax", "alpha-beta", "gemini"] = "2
     if mode == "gemini" and not gemini_enabled:
         raise Exception("Gemini is disabled but you are in gemini mode. Either enable gemini by setting gemini_enabled to True at the top of this file or change mode")
 
+    if mode == "minimax":
+        minimax_agent = MinimaxAgent(max_depth=5, use_alpha_beta=False)
+    
+    if mode == "alpha-beta":
+        minimax_agent = MinimaxAgent(max_depth=5, use_alpha_beta=True)
+
     pygame.init()
     board = Board()
 
@@ -123,13 +130,15 @@ def pygame_game(mode: Literal["2player", "minimax", "alpha-beta", "gemini"] = "2
             col = process_human_move(ui, board, screen, turn)
         elif mode == "gemini" and current_player == 2:
             # - Gemini 
-            display_text(screen, f"Thinking...", (255, 255, 255))
+            display_text(screen, f"Gemini Thinking...", (255, 255, 255))
             pygame.time.wait(500) 
             col = get_move_from_gemini(board)
         elif mode == "minimax" and current_player == 2:
-            # - The column is picked at random for now.
-            # - Minimax needs to be implemented
-            col = get_random_column(board)
+            display_text(screen, f"Minimax Thinking...", (255, 255, 255))
+            #col = get_random_column(board) # placeholder
+            game_state = initalize_board(board, 2)
+            col = minimax_agent.get_move(game_state)
+            print(col)
         elif mode == "alpha-beta" and current_player == 2:
             # - The column is picked at random for now
             # - Alpha-beta needs to be implemented
@@ -179,5 +188,5 @@ def pygame_game(mode: Literal["2player", "minimax", "alpha-beta", "gemini"] = "2
 
 if __name__ == "__main__":
     # - Change mode here to change playing mode from the following: ["2player", "minimax", "alpha-beta", "gemini"]
-    pygame_game("gemini")
+    pygame_game("minimax")
 
