@@ -4,7 +4,8 @@ def initialize_game():
     # Create empty 7x6 board, set player 1 as starting player
     return {
         'board': [[0] * 6 for _ in range(7)],
-        'current_player': 1
+        'current_player': 1,
+        'move_history': []
     }
 
 def display_board(state):
@@ -27,7 +28,7 @@ def make_move(state, column):
         if board[column][row] == 0:
             board[column][row] = state['current_player']
             # Record the move for later undo: (column, row)
-            state['move_history'].append((column, row))
+            state['move_history'].append([column, row])
             # Switch current player: if 1 then become 2, and vice versa.
             state['current_player'] = 2 if state['current_player'] == 1 else 1
             return state
@@ -48,7 +49,8 @@ def undo_move(state):
     return state
 
     
-def check_win(state, last_move):
+def check_win(state):
+    last_move = state['move_history'][-1]
     # Check for 4-in-a-row horizontally, vertically, and diagonally
     # Return winner (1 or 2) if found, else None
     if not hasattr(last_move, 'row') or not hasattr(last_move, 'col'):
@@ -97,9 +99,6 @@ def check_win(state, last_move):
                 return piece
     
     return None
-
-def get_winner(state):
-    return check_win(state, None)
     
 def is_draw(state):
     # Check if board is full with no winner
@@ -108,7 +107,7 @@ def is_draw(state):
     
 def is_terminal(state):
     # Return True if game is won or drawn
-    return check_win(state, None) or is_draw(state)
+    return check_win(state, state['move_history'][-1]) or is_draw(state)
 
 def evaluate(state, player):
     # Assign score based on piece positions and potential winning moves
@@ -140,9 +139,16 @@ class MinimaxAgent(ConnectFourAgent):
             if verbose:
                 display_board(state)
                 
-        return get_winner(state)  # Returns 1, 2, or 0 (draw)
+        return 1  # Returns 1, 2, or 0 (draw)
     
 state = initialize_game()
 display_board(state)
-#get_valid_moves(state)
-is_terminal(state)
+make_move(state, 0)
+display_board(state)
+undo_move(state)
+display_board(state)
+make_move(state, 1)
+display_board(state)
+row, col = state['move_history'][-1]
+print(row, col)
+print(state['move_history'])
