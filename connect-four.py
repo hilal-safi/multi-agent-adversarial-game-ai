@@ -7,7 +7,12 @@ def initialize_game():
     }
 
 def display_board(state):
+    # FOR TESTING ONLY
     # Print board with player pieces
+    # This is a helper function for testing
+    print("1 2 3 4 5 6 7")
+    for row in range(6):
+        print(" ".join(str(state['board'][col][5-row]) for col in range(7)))
     pass
     
 def get_valid_moves(state):
@@ -69,4 +74,6 @@ class MinimaxAgent(ConnectFourAgent):
         return get_winner(state)  # Returns 1, 2, or 0 (draw)
     
 state = initialize_game()
-print(state)
+display_board(state)
+#get_valid_moves(state)
+is_terminal(state)
