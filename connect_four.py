@@ -140,6 +140,10 @@ def minimax(state, depth, maximizing_player, max_depth):
                 best_score = score
                 best_move = move
         return best_score, best_move
+    
+def minimax_alphabeta():
+    # Placeholder for minimax with alphabeta
+    return None
 
 class ConnectFourAgent:
     def get_move(self, game_state):
@@ -155,7 +159,12 @@ class MinimaxAgent(ConnectFourAgent):
         # Determine if maximizing or minimizing player
         maximizing_player = game_state['current_player'] == 1
         
-        # Call minimax to get the best move
-        _, best_move = minimax(game_state, 0, maximizing_player, self.max_depth)
+        if (self.use_alpha_beta):
+            # Minimax with Alpha Beta Pruning
+            # Curretnly a placeholder
+            minimax_alphabeta()
+        else:
+            # Regular Minimax
+            _, best_move = minimax(game_state, 0, maximizing_player, self.max_depth)
         
         return best_move

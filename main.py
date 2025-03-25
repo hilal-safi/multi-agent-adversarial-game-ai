@@ -142,7 +142,8 @@ def pygame_game(mode: Literal["2player", "minimax", "alpha-beta", "gemini"] = "2
         elif mode == "alpha-beta" and current_player == 2:
             # - The column is picked at random for now
             # - Alpha-beta needs to be implemented
-            col = get_random_column(board)
+            game_state = initalize_board(board, 2)
+            col = minimax_agent.get_move(game_state)
         else:
             raise Exception("No valid mode")
 
