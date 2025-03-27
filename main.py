@@ -3,7 +3,7 @@ import sys
 import math
 import random
 import pygame
-from connect_four import initalize_board, MinimaxAgent
+from connect_four import initialize_board, MinimaxAgent
 from game.board import Board, check_win
 from game.ui import UIBuilder
 from typing import Literal, Tuple, List
@@ -136,14 +136,14 @@ def pygame_game(mode: Literal["2player", "minimax", "alpha-beta", "gemini"] = "2
         elif mode == "minimax" and current_player == 2:
             display_text(screen, f"Minimax Thinking...", (255, 255, 255))
             #col = get_random_column(board) # placeholder
-            game_state = initalize_board(board, 2)
+            game_state = initialize_board(board, 2)
             col = minimax_agent.get_move(game_state)
             print(col)
         elif mode == "alpha-beta" and current_player == 2:
-            # - The column is picked at random for now
-            # - Alpha-beta needs to be implemented
-            game_state = initalize_board(board, 2)
+            display_text(screen,f"Alpha-Beta Thinking...", (255, 255, 255))
+            game_state = initialize_board(board, 2)
             col = minimax_agent.get_move(game_state)
+            print(col)
         else:
             raise Exception("No valid mode")
 

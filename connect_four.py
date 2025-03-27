@@ -1,7 +1,7 @@
 from game.board import Board, check_win as board_check_win
 import math, copy
 
-def initalize_board(board=Board(), current_player=1):
+def initialize_board(board=Board(), current_player=1):
     # Create a new Board instance instead of a raw list
     return {
         'board': board,
@@ -141,9 +141,40 @@ def minimax(state, depth, maximizing_player, max_depth):
                 best_move = move
         return best_score, best_move
     
-def minimax_alphabeta():
-    # Placeholder for minimax with alphabeta
-    return None
+def minimax_alpha_beta(state, depth, maximizing_player, max_depth, alpha, beta):
+    # Terminal state or max depth reached
+    if is_terminal(state) or depth == max_depth:
+        return value(state), None
+    
+    valid_moves = get_valid_moves(state)
+    
+    # Maximizing player (Player 1)
+    if maximizing_player:
+        best_score = -math.inf
+        best_move = None
+        for move in valid_moves:
+            score, _ = minimax_alpha_beta(result(state, move), depth + 1, False, max_depth, alpha, beta)
+            if score > best_score:
+                best_score = score
+                best_move = move
+            alpha = max(alpha, best_score)
+            if beta <= alpha:
+                break # Break cutoff
+        return best_score, best_move
+        
+    #Minimizing player (Player 2)
+    else:
+        best_score = math.inf
+        best_move = None
+        for move in valid_moves:
+            score, _ = minimax_alpha_beta(result(state, move), depth + 1, True, max_depth, alpha, beta)
+            if score < best_score:
+                best_score = score
+                best_move = move
+            beta = min(beta, best_score)
+            if beta <= alpha:
+                break # Alpha cutoff
+        return best_score, best_move
 
 class ConnectFourAgent:
     def get_move(self, game_state):
@@ -161,8 +192,7 @@ class MinimaxAgent(ConnectFourAgent):
         
         if (self.use_alpha_beta):
             # Minimax with Alpha Beta Pruning
-            # Curretnly a placeholder
-            minimax_alphabeta()
+            _, best_move = minimax_alpha_beta(game_state, 0, maximizing_player, self.max_depth)
         else:
             # Regular Minimax
             _, best_move = minimax(game_state, 0, maximizing_player, self.max_depth)
