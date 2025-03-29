@@ -8,42 +8,70 @@
   - The class uses the os library to load environment variables
 """
 import os
-from google import genai
+import google.generativeai as genai
 from game.board import Board, check_win
 from dotenv import load_dotenv
 from typing import Literal, Tuple, List
+import re
+import time
+import csv
 load_dotenv()
 
 gemini_key = os.getenv("GEMINI_API_KEY")
 if not gemini_key:
   raise ValueError("GEMINI_API_KEY is not provided. Please provide it in .env file")
 
+logged_games = set()
+
+def get_next_game_number() -> int:
+    try:
+        with open("game_result.csv", "r") as f:
+            rows = list(csv.reader(f))
+            if len(rows) <= 1:
+                return 1
+            last_row = rows[-1]
+            return int(last_row[0]) + 1
+    except FileNotFoundError:
+        return 1
+
+def start_new_game_log(game_num: int):
+    with open("gemini_analysis.txt", "a") as f:
+        f.write(f"\n####################################\n")
+        f.write(f"###          GAME {game_num:<3}          ###\n")
+        f.write(f"####################################\n\n")
+
 class GeminiAPI:
-  def __init__(self, api_key:str) -> None:
-    self.api_key = api_key
-    self.client = genai.Client(api_key=api_key, http_options={'api_version':'v1alpha'})
+  def __init__(self, api_key: str) -> None:
+    genai.configure(api_key=api_key)
+    self.model = genai.GenerativeModel(model_name="models/gemini-2.0-flash")
 
-  def generate(self, prompt:str):
-    response = self.client.models.generate_content(
-        model="gemini-2.0-flash", contents=prompt
-    )
+  def generate(self, prompt: str):
+      start = time.time()
+      max_retries = 3
+      for attempt in range(max_retries):
+          try:
+              response = self.model.generate_content(prompt)
+              self.last_time = round(time.time() - start, 4)
+              return response.text
+          except Exception as e:
+              print(f"[Gemini Retry {attempt + 1}/{max_retries}] Error: {e}")
+              if attempt == max_retries - 1:
+                  with open("gemini_analysis.txt", "a") as f:
+                      f.write(f"[GEMINI ERROR - Quota/Failure]: {e}\n")
+                      f.write("------------------------------------------------------------\n")
+                  return "ERROR: Gemini API quota exceeded or failed to respond."
+              time.sleep(1)  # Small delay before retry
+
+  def generate_with_thinking(self, prompt: str):
+    response = self.model.generate_content(prompt)
     return response.text
-    
-  def generate_with_thinking(self, prompt:str):
-    response = self.client.models.generate_content(
-        model="gemini-2.0-flash-thinking-exp", contents=prompt
-    )
-    return response.text
 
-  def json(self, prompt:str, schema):
-    response = self.client.models.generate_content(
-          model="gemini-2.0-flash", contents=prompt, config={
-          'response_mime_type': 'application/json',
-          'response_schema': int,
-      },
-    )
-    return response.parsed
-
+  def json(self, prompt: str, schema):
+    response = self.model.generate_content(prompt)
+    match = re.findall(r"\b[1-7]\b", response.text)
+    if match:
+        return int(match[0])
+    raise ValueError("Could not parse a valid column number from Gemini response.")
 
 gemini = GeminiAPI(gemini_key)
 
@@ -63,7 +91,10 @@ rules = """Rules:
 - If a potential threat is surrounded by 'B's and there are no '0's for A to be placed to form 4 in a row, then it is not a threat.
 """
 
-def get_move_from_gemini(board: Board) -> int: # - Make sure this is an int
+def get_move_from_gemini(board: Board, game_num: int) -> int: # - Make sure this is an int
+    if game_num not in logged_games:
+        start_new_game_log(game_num)
+        logged_games.add(game_num)
     printed = board.to_string()
     print(f"------------------------------------\nThinking\n{printed}\n------------------------------------")
     prompt = f"""You are a professional Connect 4 player. 
@@ -82,29 +113,62 @@ Analyze the board and respond with what your best options are, that would preven
     response = gemini.generate(prompt)
     print(response)
 
-    prompt = f"""You are a professional Connect 4 player. 
+    with open("gemini_analysis.txt", "a") as f:
+        f.write("BOARD STATE:\n" + printed + "\n")
+        f.write("RESPONSE:\n" + response + "\n")
+        f.write("------------------------------------------------------------\n")
 
+    prompt = f"""You are a professional Connect 4 strategist.
+    
 {rules}
 
-Based on the insights below, pick a column number ranging from 1 to {board.columns}.
+Analyze the thought process and commentary below, and choose the BEST column number (1 to {board.columns}) for player B to play. Only return a single integer on its own line. Do not include any explanation.
 
 {response}
 """
 
     col = gemini.json(prompt, int)
+    if isinstance(col, str) and col.startswith("ERROR"):
+        print("Gemini failed to return a valid response. Falling back to random valid column.")
+        for i in range(board.columns):
+            if board.is_valid_move(i):
+                return i
+        raise RuntimeError("No valid moves available.")
 
-    # - ----------------------------------------------------------------
-    # - THIS IS A RETRYING LOGIC IN CASE GEMINI GIVES AN INVALID COLUMNS
+    print(f"[Gemini JSON Response] Column: {col}")
+
+    if not isinstance(col, int) or col < 1 or col > board.columns:
+        raise ValueError(f"Invalid column received from Gemini: {col}")
+
+    col_index = col - 1
     print(f"Initial column: {col}")
     max_tries = 3
     failedAttempts: List[int] = []
-    while col - 1 < 0 or col - 1 > 7 or not board.is_valid_move(col - 1):
-      if len(failedAttempts) == max_tries:
-        raise Exception("Max tries reached and gemini couldn't come up with a valid column")
-      failedAttempts.append(col)
-      res = gemini.json(prompt + f"\nThe previous model responsed with the following columns but they are either outside of model bounds or are invalid moves such as full column: " + ", ".join(f'"{num}"' for num in failedAttempts), int)
-      col = res
-      print(f"New column: {col}")
-      # - ----------------------------------------------------------------
+
+    while col_index < 0 or col_index >= board.columns or not board.is_valid_move(col_index):
+        failedAttempts.append(col)
+        if len(failedAttempts) == max_tries:
+            print("Max tries reached. Attempting fallback column.")
+            fallback_col = 3
+            if board.is_valid_move(fallback_col):
+                return fallback_col
+            for i in range(board.columns):
+                if board.is_valid_move(i):
+                    return i
+            raise RuntimeError("Gemini and fallback logic failed to find a valid move.")
+        res = gemini.json(prompt + f"\nThe previous model responded with the following columns but they are invalid: " + ", ".join(f'"{num}"' for num in failedAttempts), int)
+        col = res
+        col_index = col - 1
+        print(f"New column: {col}")
+
+    decision_time = gemini.last_time if hasattr(gemini, "last_time") else 0.5
+    board.last_decision_time = decision_time
+
+    board.last_nodes_evaluated = "N/A"
+    board.last_agent_used = "gemini"
+
+    with open("gemini_analysis.txt", "a") as f:
+        f.write(f"FINAL MOVE SELECTED: Column {col}\n")
+        f.write("------------------------------------------------------------\n")
 
     return col - 1

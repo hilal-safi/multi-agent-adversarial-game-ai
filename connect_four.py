@@ -117,7 +117,9 @@ def result(state, move):
     make_move(new_state, move)
     return new_state
 
-def minimax(state, depth, maximizing_player, max_depth):
+def minimax(state, depth, maximizing_player, max_depth, node_counter=None):
+    if node_counter is not None:
+        node_counter["count"] += 1
     # terminal state or max depth reached
     if is_terminal(state) or depth == max_depth:
         return value(state), None
@@ -130,7 +132,7 @@ def minimax(state, depth, maximizing_player, max_depth):
         best_move = None
         for move in valid_moves:
             # Recursively explore moves
-            score, _ = minimax(result(state, move), depth + 1, False, max_depth)
+            score, _ = minimax(result(state, move), depth + 1, not maximizing_player, max_depth, node_counter)
             if score > best_score:
                 best_score = score
                 best_move = move
@@ -142,13 +144,15 @@ def minimax(state, depth, maximizing_player, max_depth):
         best_move = None
         for move in valid_moves:
             # Recursively explore moves
-            score, _ = minimax(result(state, move), depth + 1, True, max_depth)
+            score, _ = minimax(result(state, move), depth + 1, not maximizing_player, max_depth, node_counter)
             if score < best_score:
                 best_score = score
                 best_move = move
         return best_score, best_move
     
-def minimax_alpha_beta(state, depth, maximizing_player, max_depth, alpha, beta):
+def minimax_alpha_beta(state, depth, maximizing_player, max_depth, alpha, beta, node_counter=None):
+    if node_counter is not None:
+        node_counter["count"] += 1
     # Terminal state or max depth reached
     if is_terminal(state) or depth == max_depth:
         return value(state), None
@@ -160,7 +164,7 @@ def minimax_alpha_beta(state, depth, maximizing_player, max_depth, alpha, beta):
         best_score = -math.inf
         best_move = None
         for move in valid_moves:
-            score, _ = minimax_alpha_beta(result(state, move), depth + 1, False, max_depth, alpha, beta)
+            score, _ = minimax_alpha_beta(result(state, move), depth + 1, not maximizing_player, max_depth, alpha, beta, node_counter)
             if score > best_score:
                 best_score = score
                 best_move = move
@@ -174,7 +178,7 @@ def minimax_alpha_beta(state, depth, maximizing_player, max_depth, alpha, beta):
         best_score = math.inf
         best_move = None
         for move in valid_moves:
-            score, _ = minimax_alpha_beta(result(state, move), depth + 1, True, max_depth, alpha, beta)
+            score, _ = minimax_alpha_beta(result(state, move), depth + 1, not maximizing_player, max_depth, alpha, beta, node_counter)
             if score < best_score:
                 best_score = score
                 best_move = move
@@ -196,16 +200,18 @@ class MinimaxAgent(ConnectFourAgent):
     def get_move(self, game_state):
         # Determine if maximizing or minimizing player
         maximizing_player = game_state['current_player'] == 1
-        
-        if (self.use_alpha_beta):
+        node_counter = {"count": 0}
+
+        if self.use_alpha_beta:
             # Minimax with Alpha Beta Pruning
-            _, best_move = minimax_alpha_beta(game_state, 0, maximizing_player, self.max_depth)
+            _, best_move = minimax_alpha_beta(game_state, 0, maximizing_player, self.max_depth, -math.inf, math.inf, node_counter)
         else:
             # Regular Minimax
-            _, best_move = minimax(game_state, 0, maximizing_player, self.max_depth)
+            _, best_move = minimax(game_state, 0, maximizing_player, self.max_depth, node_counter)
 
         # Debug output:
         print(f"Selected Move by AI: {best_move}")
         print(f"Current Board State:\n{game_state['board'].grid}")
-        
-        return best_move
+        print(f"Nodes evaluated: {node_counter['count']}")
+
+        return best_move, node_counter["count"]

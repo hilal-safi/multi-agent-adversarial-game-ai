@@ -1,3 +1,5 @@
 pygame
 google-genai
 python-dotenv
+google-generativeai
+python-dotenv
