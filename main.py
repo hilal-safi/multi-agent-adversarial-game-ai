@@ -1,3 +1,12 @@
+""" main.py
+Connect 4 Game with Pygame and Minimax AI
+- This file contains the main game loop and UI for the Connect 4 game
+- The game can be played in different modes: 2-player, Minimax AI, Alpha-Beta Pruning AI, and Gemini AI
+- The game uses the Pygame library for graphics and user input
+- The game board is represented as a 2D list and the game logic is implemented in the Board class
+- The game uses the Minimax algorithm with Alpha-Beta pruning to determine the best move for the AI
+- The game has a UI that displays the game board, pieces, and player turns
+"""
 import os
 import sys
 import math

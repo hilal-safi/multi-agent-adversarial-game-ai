@@ -1,3 +1,18 @@
+""" board.py
+ - This file contains the Board class and the functions to manipulate the board
+    - The Board class has methods to reset the board, check if a move is valid, drop a piece, and check for a win
+    - The functions check_win checks if a player has won the game
+    - The Board class has the following attributes:
+        - rows: the number of rows in the board
+        - columns: the number of columns in the board
+        - grid: a 2D list representing the board
+    - The Board class has the following methods:
+        - reset_board: resets the board to its initial state
+        - is_valid_move: checks if a move is valid
+        - get_next_open_row: gets the next open row in a column
+        - drop_piece: drops a piece in the board
+    - The functions check_win checks if a player has won the game
+""" 
 from dataclasses import dataclass, field
 from typing import List, Optional
 

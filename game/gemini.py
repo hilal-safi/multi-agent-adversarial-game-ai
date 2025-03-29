@@ -1,3 +1,12 @@
+""" gemini.py
+  - This file contains the GeminiAPI class that interacts with the Gemini API
+  - The class has methods to generate text and JSON responses from the API
+  - The class also has a method to generate a move for the Connect 4 game
+  - The class uses the dotenv library to load environment variables from a .env file
+  - The class uses the google.genai library to interact with the Gemini API
+  - The class uses the game.board module to interact with the Connect 4 board
+  - The class uses the os library to load environment variables
+"""
 import os
 from google import genai
 from game.board import Board, check_win

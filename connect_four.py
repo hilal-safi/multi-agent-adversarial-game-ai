@@ -1,3 +1,10 @@
+"""connect_four.py   
+ - This file contains the Connect Four game logic and the Minimax agent
+ - The game logic includes functions to initialize the board, make moves, check for wins, and evaluate the board
+ - The Minimax agent uses the Minimax algorithm with Alpha-Beta pruning to determine the best move
+ - The Minimax agent has a method to get the best move based on the current game state
+ - The Minimax agent has a method to evaluate the board and assign scores to different game states
+"""
 from game.board import Board, check_win as board_check_win
 import math, copy
 
@@ -78,7 +85,7 @@ def evaluate_board(state):
     # - vertical
     for col_index in range(board.columns):
         for row_index in range(board.rows - 3):
-            window = [board.grid[row_index+1][col_index] for i in range(4)]
+            window = [board.grid[row_index + i][col_index] for i in range(4)]
             total_score += check_window(window, player, opponent)
 
     # - diagonal, south west to north-east
@@ -196,5 +203,9 @@ class MinimaxAgent(ConnectFourAgent):
         else:
             # Regular Minimax
             _, best_move = minimax(game_state, 0, maximizing_player, self.max_depth)
+
+        # Debug output:
+        print(f"Selected Move by AI: {best_move}")
+        print(f"Current Board State:\n{game_state['board'].grid}")
         
         return best_move

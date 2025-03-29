@@ -1,3 +1,12 @@
+""" ui.py
+    - This file contains the UIBuilder class that is responsible for drawing the game board and pieces
+    - The class has methods to draw the background, board, and pieces
+    - The class uses the pygame library to draw the UI
+    - The class has methods to animate the dropping of pieces
+    - The class has methods to draw the inner shadow and smooth circle 
+    - The class has methods to update the display
+    - The class has methods to handle the UI events
+"""
 import pygame
 from typing import Tuple
 from game.board import Board
