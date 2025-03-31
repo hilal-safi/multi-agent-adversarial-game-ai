@@ -23,6 +23,18 @@ This project implements a multi-agent adversarial game environment using **Conne
   - Gemini API-based Agent (External AI)
 - Performance comparison and scalability analysis.
 
+### Features & Goals
+
+- [x] Implement Connect4 Game Environment.
+- [x] Implement Minimax Algorithm.
+- [x] Add Alpha-Beta Pruning Optimization.
+- [x] Local Multiplayer: Classic Connect 4 with two human players.
+- [x] Integrate Gemini API Agent.
+- [x] Simulation Mode: Bulk-run or replay games for performance and statistics, pitting the AI agents against a simple random move generator.
+- [x] Logging: Time-per-move and node evaluations are recorded in CSV files for performance analysis.
+- [x] Compare Agent Performance (using logs stored in CSV files).
+- [x] Visualize Game Trees and Pruning.
+
 ## Project Structure
 
 ```
@@ -91,18 +103,6 @@ pygame_game(mode="minimax", simulate=True, auto_restart=True)
 ```
 
 Results will be saved to `performance_log.csv` and `game_result.csv`.
-
-## Features & Goals
-
-- [x] Implement Connect4 Game Environment.
-- [x] Implement Minimax Algorithm.
-- [x] Add Alpha-Beta Pruning Optimization.
-- [x] Local Multiplayer: Classic Connect 4 with two human players.
-- [x] Integrate Gemini API Agent.
-- [x] Simulation Mode: Bulk-run or replay games for performance and statistics, pitting the AI agents against a simple random move generator.
-- [x] Logging: Time-per-move and node evaluations are recorded in CSV files for performance analysis.
-- [x] Compare Agent Performance (using logs stored in CSV files).
-- [x] Visualize Game Trees and Pruning.
 
 ## How It Works
 
