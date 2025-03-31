@@ -72,7 +72,7 @@ multi-agent-adversarial-game-ai/
    GEMINI_API_KEY=your_key_here
    ```
 
-## How to Run
+### How to Run
 
 Step-by-step instructions for running the game and testing the agents.
 You can run the game in one of several modes. At the bottom of `main.py`, uncomment the desired mode:
@@ -138,7 +138,7 @@ CSV output for analysis:
 - `performance_log.csv`: Move time, agent type, nodes evaluated
 - `game_result.csv`: Game outcomes and total duration
 
-## Logging & CSV Output
+### Logging & CSV Output
 
 After each game or simulation, two CSVs are generated:
 - `performance_log.csv`: Records agent name, move number, column chosen, time taken, and evaluated nodes (if applicable).
