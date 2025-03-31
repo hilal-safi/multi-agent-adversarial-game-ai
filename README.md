@@ -94,12 +94,27 @@ Results will be saved to `performance_log.csv` and `game_result.csv`.
 
 ## Features & Goals
 
-- [x] Implement Connect4 Game Environment  
-- [x] Implement Minimax Algorithm  
-- [x] Add Alpha-Beta Pruning Optimization  
-- [x] Integrate Gemini API Agent  
-- [x] Compare Agent Performance  
-- [x] Visualize Game Trees and Pruning  
+- [x] Implement Connect4 Game Environment.
+- [x] Implement Minimax Algorithm.
+- [x] Add Alpha-Beta Pruning Optimization.
+- [x] Local Multiplayer: Classic Connect 4 with two human players.
+- [x] Integrate Gemini API Agent.
+- [x] Simulation Mode: Bulk-run or replay games for performance and statistics, pitting the AI agents against a simple random move generator.
+- [x] Logging: Time-per-move and node evaluations are recorded in CSV files for performance analysis.
+- [x] Compare Agent Performance (using logs stored in CSV files).
+- [x] Visualize Game Trees and Pruning.
+
+## How It Works
+
+### Game Flow
+- The game board is represented as a 2D list, where `0 = empty`, `1 = Player 1`, and `2 = Player 2`.
+- Moves are selected either by human input (mouse click) or by the AI agent (Minimax, Alpha-Beta, or Gemini).
+- The first player to align four tokens in a row, column, or diagonal wins.
+
+### AI Agents
+- **Minimax**: Classic recursive algorithm that evaluates all possible game states up to a fixed depth.
+- **Alpha-Beta Pruning**: Optimized Minimax that skips irrelevant branches, significantly reducing computation.
+- **Gemini API**: Sends board state as a prompt to a language model which returns a recommended column (not a search-based AI, so node count is zero).
 
 ## Performance Metrics
 
@@ -122,18 +137,6 @@ This project compares the performance of Minimax, Alpha-Beta Pruning, and Gemini
 CSV output for analysis:
 - `performance_log.csv`: Move time, agent type, nodes evaluated
 - `game_result.csv`: Game outcomes and total duration
-
-## How It Works
-
-### Game Flow
-- The game board is represented as a 2D list, where `0 = empty`, `1 = Player 1`, and `2 = Player 2`.
-- Moves are selected either by human input (mouse click) or by the AI agent (Minimax, Alpha-Beta, or Gemini).
-- The first player to align four tokens in a row, column, or diagonal wins.
-
-### AI Agents
-- **Minimax**: Classic recursive algorithm that evaluates all possible game states up to a fixed depth.
-- **Alpha-Beta Pruning**: Optimized Minimax that skips irrelevant branches, significantly reducing computation.
-- **Gemini API**: Sends board state as a prompt to a language model which returns a recommended column (not a search-based AI, so node count is zero).
 
 ## Logging & CSV Output
 
