@@ -160,7 +160,7 @@ print(df.describe())
 
 Gemini is an external Large Language Model (LLM) used to simulate intelligent gameplay. It receives the current board state as a textual prompt and responds with strategic analysis and a chosen column.
 
-- 🤖 Model used: `gemini-pro` (or fallback to `chat-bison-001` if needed)
+- 🤖 Model used: `gemini-2.0-flash`
 - ⚙️ How it works:
   1. The board is serialized into text format.
   2. A detailed prompt is sent describing the game rules and the board state.
