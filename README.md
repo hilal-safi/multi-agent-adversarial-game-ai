@@ -23,7 +23,7 @@ This project implements a multi-agent adversarial game environment using **Conne
   - Gemini API-based Agent (External AI)
 - Performance comparison and scalability analysis.
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 multi-agent-adversarial-game-ai/
