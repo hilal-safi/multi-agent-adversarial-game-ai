@@ -2,7 +2,7 @@
 
 This project implements a multi-agent adversarial game environment using **Connect4** as the base game. It explores decision-making strategies using **Minimax**, **Alpha-Beta Pruning**, and a third-party AI agent via the **Gemini API**.
 
-## 👥 Group Members
+## Group Members
 - Amy Freij Camacho
 - Nicole Freij Camacho
 - Hilal Safi
@@ -14,7 +14,7 @@ This project implements a multi-agent adversarial game environment using **Conne
 - Afo Awogbemi
 - Darsh Gandhi
 
-## 📌 Project Overview
+## Project Overview
 
 - Two-player turn-based **Connect4** game.
 - AI Agents:
@@ -42,7 +42,7 @@ multi-agent-adversarial-game-ai/
 └── README.md                # Project documentation
 ```
 
-## 🔧 Setup & Installation
+## Setup & Installation
 
 1. Clone the repository:
    ```bash
@@ -60,7 +60,7 @@ multi-agent-adversarial-game-ai/
    GEMINI_API_KEY=your_key_here
    ```
 
-## 🚀 How to Run
+## How to Run
 
 Step-by-step instructions for running the game and testing the agents.
 You can run the game in one of several modes. At the bottom of `main.py`, uncomment the desired mode:
@@ -92,7 +92,7 @@ pygame_game(mode="minimax", simulate=True, auto_restart=True)
 
 Results will be saved to `performance_log.csv` and `game_result.csv`.
 
-## 📊 Features & Goals
+## Features & Goals
 
 - [x] Implement Connect4 Game Environment  
 - [x] Implement Minimax Algorithm  
@@ -101,20 +101,20 @@ Results will be saved to `performance_log.csv` and `game_result.csv`.
 - [x] Compare Agent Performance  
 - [x] Visualize Game Trees and Pruning  
 
-## 📈 Performance Metrics
+## Performance Metrics
 
 This project compares the performance of Minimax, Alpha-Beta Pruning, and Gemini API agents against a random opponent over multiple simulations.
 
-- 🔄 **Simulations Run**: 100 Minimax, 100 Alpha-Beta, 20 Gemini
-- ⏱️ **Avg. Time per Move**:
+- **Simulations Run**: 100 Minimax, 100 Alpha-Beta, 20 Gemini
+- **Avg. Time per Move**:
   - Alpha-Beta: Fastest due to pruning
   - Minimax: Moderate
   - Gemini: Slowest due to API latency
-- 📊 **Win Rates**:
+- **Win Rates**:
   - Minimax: 100%
   - Alpha-Beta: 100%
   - Gemini: ~50%
-- 📈 **Node Evaluation**:
+- **Node Evaluation**:
   - Minimax and Alpha-Beta report number of nodes evaluated
   - Gemini API does not expose internal decision nodes (0 recorded)
   - Gemini strategy insights are further explored in `gemini_analysis.txt`, revealing how Gemini prioritizes center control, threat blocking, and fork prevention.
@@ -123,7 +123,7 @@ CSV output for analysis:
 - `performance_log.csv`: Move time, agent type, nodes evaluated
 - `game_result.csv`: Game outcomes and total duration
 
-## 🧪 How It Works
+## How It Works
 
 ### Game Flow
 - The game board is represented as a 2D list, where `0 = empty`, `1 = Player 1`, and `2 = Player 2`.
@@ -135,7 +135,7 @@ CSV output for analysis:
 - **Alpha-Beta Pruning**: Optimized Minimax that skips irrelevant branches, significantly reducing computation.
 - **Gemini API**: Sends board state as a prompt to a language model which returns a recommended column (not a search-based AI, so node count is zero).
 
-## 🗂 Logging & CSV Output
+## Logging & CSV Output
 
 After each game or simulation, two CSVs are generated:
 - `performance_log.csv`: Records agent name, move number, column chosen, time taken, and evaluated nodes (if applicable).
@@ -149,28 +149,27 @@ df = pd.read_csv("performance_log.csv")
 print(df.describe())
 ```
 
-## 🛠 Troubleshooting
+## Gemini API
+
+### Overview
+Gemini is an external Large Language Model (LLM) used to simulate intelligent gameplay. It receives the current board state as a textual prompt and responds with strategic analysis and a chosen column.
+Model used: `gemini-2.0-flash`
+Note: Gemini does not expose internal computations like a search tree. Therefore, node count is always recorded as `0`.
+
+### How it works:
+  1. The board is serialized into text format.
+  2. A detailed prompt is sent describing the game rules and the board state.
+  3. Gemini analyzes and returns a recommended move (column number).
+  4. If Gemini selects an invalid column (e.g., full), fallback logic retries or chooses a random valid column.
+
+### Troubleshooting
 
 - **Gemini model not found**: Check `gemini.py` and ensure you're using a valid model (e.g., `"chat-bison-001"`). Your API key must have access.
 - **Rate limits**: Free-tier Gemini API may throttle you. Use fewer games or increase delay between requests.
 - **Invalid column**: Gemini may return an invalid column. The program includes retry logic and falls back to a random valid move.
 - **Missing API key**: Ensure `.env` file exists with `GEMINI_API_KEY=your_key`.
 
-## 🧠 Gemini API
-
-Gemini is an external Large Language Model (LLM) used to simulate intelligent gameplay. It receives the current board state as a textual prompt and responds with strategic analysis and a chosen column.
-
-- 🤖 Model used: `gemini-2.0-flash`
-- ⚙️ How it works:
-  1. The board is serialized into text format.
-  2. A detailed prompt is sent describing the game rules and the board state.
-  3. Gemini analyzes and returns a recommended move (column number).
-  4. If Gemini selects an invalid column (e.g., full), fallback logic retries or chooses a random valid column.
-
-⚠️ Gemini does not expose internal computations like a search tree. Therefore, node count is always recorded as `0`.
-
-
-## 📚 References
+## References
 
 - _Artificial Intelligence: A Modern Approach_ by Russell & Norvig  
 - CP468 Course Notes
